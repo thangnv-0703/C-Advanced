@@ -20,7 +20,7 @@ SymbolTable createSymbolTable(Entry (*makeNode)(void*,void*), int (*compare)(voi
 
 void dropSymbolTable(SymbolTable *tab){
     for(int i = 0 ; i < tab->total ; i++){
-        free((tab + i));
+        free((tab->entries + i));
     }
     tab->total = 0;
     tab->size = INITIAL_SIZE;
