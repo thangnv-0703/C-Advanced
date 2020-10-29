@@ -19,15 +19,15 @@ int main(){
                 printf("");
                 FILE *ptr = fopen("phonebook.txt","r");
                 char *name = (char*) malloc(sizeof(char) * MAX_LENGTH_STRING);
-                char *sdt = (char*) malloc(sizeof(char) * MAX_LENGTH_STRING);
-                while(fscanf(ptr,"%s %s\n",name,sdt) == 2){
+                long *sdt = (long*) malloc(sizeof(long));
+                while(fscanf(ptr,"%s %ld\n",name,&sdt) == 2){
                     JRB isExist = jrb_find_str(book,name);
                     if( isExist != NULL){
-                        isExist->val = new_jval_s(strdup(sdt));
-                        sdt = (char*) malloc(sizeof(char) *MAX_LENGTH_STRING); // Assign sdt to new address
+                        isExist->val = new_jval_l(sdt);
+                        sdt = (long*) malloc(sizeof(long)); // Assign sdt to new address
                     }else{
-                        jrb_insert_str(book,strdup(name),new_jval_s(strdup(sdt)));
-                        sdt = (char*) malloc(sizeof(char) *MAX_LENGTH_STRING);
+                        jrb_insert_str(book,strdup(name),new_jval_l(sdt));
+                        sdt = (long*) malloc(sizeof(long));
                     }
                     
                 }
@@ -40,13 +40,13 @@ int main(){
                 scanf("%[^\n]s",name);
                 printf("Enter the phone number\n");
                 fflush(stdin);
-                scanf("%s",sdt);
+                scanf("%ld",&sdt);
                 JRB foundNode =  jrb_find_str(book,name);
                 if(foundNode != NULL){
-                    foundNode->val = new_jval_s(strdup(sdt));
-                    sdt = (char*) malloc(sizeof(char) *MAX_LENGTH_STRING); // Assign sdt to new address
+                    foundNode->val = new_jval_l(sdt);
+                    sdt = (long*) malloc(sizeof(long)); // Assign sdt to new address
                 }else
-                    jrb_insert_str(book,strdup(name),new_jval_s(strdup(sdt)));
+                    jrb_insert_str(book,strdup(name),new_jval_l(sdt));
                     //sdt = (char*) malloc(sizeof(char) *MAX_LENGTH_STRING); // Assign sdt to new address
                 break;
             case 3:
@@ -64,15 +64,15 @@ int main(){
                 if(foundNode != NULL){
                     printf("Enter the phone number\n");
                     fflush(stdin);
-                    scanf("%s",sdt);
-                    foundNode->val = new_jval_s(strdup(sdt));
+                    scanf("%ld",&sdt);
+                    foundNode->val = new_jval_l(sdt);
                 }else printf("Not Found!!!\n");
-                sdt = (char*) malloc(sizeof(char) *MAX_LENGTH_STRING); // Assign sdt to new address
+                sdt = (long*) malloc(sizeof(long)); // Assign sdt to new address
                 break;
             case 5:
                 printf("%-25s%s\n","Name","PhoneNumber");
                 jrb_traverse(node,book){
-                    printf("%s %s\n",jval_s(node->key),jval_s(node->val));
+                    printf("%s %ld\n",jval_s(node->key),jval_l(node->val));
                 }
                 break;
         }

@@ -56,7 +56,7 @@ int main(){
         char sdt[13];
         memset(sdt,'\0',sizeof(char)*13);
         myitoa(r,str);
-        strcpy( sdt,"+849");
+        //strcpy( sdt,"+849");
         strcat( sdt,str );
         char *name = generateName(first_name,mid);
         //printf("%s \n",name);
