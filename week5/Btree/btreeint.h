@@ -48,9 +48,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <jsconfig.h>
+#include "jsconfig.h"
 
-#include <jssubs.h>
+#include "jssubs.h"
 
 /*
  *  Layout of pages in the tree:

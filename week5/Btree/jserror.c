@@ -7,7 +7,7 @@
 *
 *************************************************************************/
 
-#include <jssubs.h>
+#include "jssubs.h"
 
 #define Prototype extern
 

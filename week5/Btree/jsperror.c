@@ -15,7 +15,7 @@ static const char rcsid[] = "$Id$";
 #include <stdio.h>
 #include <errno.h>
 
-#include <jssubs.h>
+#include "jssubs.h"
 
 #define Prototype extern
 /*********     PROTOTYPES                                       *********/

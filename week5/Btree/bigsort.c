@@ -19,16 +19,16 @@ static const char rcsid[] = "$Id: bigsort.c,v 1.12 1998/04/01 17:07:48 joerg Sta
 #endif
 
 /*********     INCLUDE                                         *********/
-#include <jsalloca.h>
+#include "jsalloca.h"
 
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <jsconfig.h>
+#include "jsconfig.h"
 
-#include <jssubs.h>
+#include "jssubs.h"
 
 #ifndef CONFIG_NO_POSIX
 # include <unistd.h>
@@ -704,13 +704,13 @@ static void bsSift(void **array,int (*compare)(void *uptr,const void *a,
 #define GENSORT_COMPAREKEYS(k1,k2)   (*compare)(uPtr,k1,k2) < 0
 
 static	/*  Generated as a static routine    */
-#include <gensort.h>
+#include "gensort.h"
 
 /*JS*********************************************************************
 *   Select the next sequence to copy the next run to.
 *************************************************************************/
 
-static int selectRun(BigSort *pbs)
+/*static*/ int selectRun(BigSort *pbs)
 
 /************************************************************************/
 {

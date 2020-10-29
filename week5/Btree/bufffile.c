@@ -127,7 +127,7 @@ struct BuffFile {
 #endif
 
 #ifdef CONFIG_USE_MMAP
-# include <sys/mman.h>
+#include <sys/mman.h>
 #endif
 
 /* Using the defaults, the maximum used memory for buffering is

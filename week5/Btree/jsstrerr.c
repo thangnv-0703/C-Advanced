@@ -15,9 +15,9 @@ static const char rcsid[] = "$Id: jsstrerr.c,v 1.2 1997/07/20 21:21:05 joerg Sta
 #include <stdio.h>
 #include <string.h>
 
-#include <jsconfig.h>
+#include "jsconfig.h"
 
-#include <jssubs.h>
+#include "jssubs.h"
 
 #define Prototype extern
 /*********     PROTOTYPES                                       *********/

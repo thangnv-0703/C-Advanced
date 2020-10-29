@@ -111,7 +111,7 @@ typedef struct {
 		bayTreeUpdate2(bt,oNumber,nNumber,content,content,0)
 
 /* ----------- FILE: bufffile.c           ------------ */
-#include <jsconfig.h>  /*  For configurational definitions  */
+#include "jsconfig.h"  /*  For configurational definitions  */
 
 typedef struct BuffFilePage BuffFilePage;
 struct BuffFilePage {

@@ -14,7 +14,7 @@ static const char rcsid[] = "$Id: btreebuild.c,v 1.7 1998/05/22 08:40:58 joerg S
 #endif
 
 /*********     INCLUDES                                         *********/
-#include <jsalloca.h>
+#include "jsalloca.h"
 
 #include "btreeint.h"
 
