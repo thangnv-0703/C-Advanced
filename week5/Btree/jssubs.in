@@ -1,0 +1,69 @@
+/*JS*********************************************************************
+*
+*    Program : JSSUBS.H
+*    Language: ANSI-C
+*    Author  : Joerg Schoen
+*    Purpose : Include file for library 'libjssubs.a' and all programs
+*		that use this library.
+*
+*************************************************************************/
+#ifndef __JSSUBS_H__ /*   File must not be included more than once!   */
+#define __JSSUBS_H__
+
+/*********     GENERAL DEFINES					*********/
+#ifndef FALSE
+# define FALSE	0
+#endif
+#ifndef TRUE
+# define TRUE	1
+#endif
+
+/* ****    Some useful macros (be aware of side effects because   **** */
+/* ****     they treat arguments more than once).		  **** */
+#ifndef MAX
+# define MAX(a,b)  ((a) > (b) ? (a) :  (b))
+#endif
+#ifndef MIN
+# define MIN(a,b)  ((b) > (a) ? (a) :  (b))
+#endif
+#ifndef ABS
+# define ABS(x)    ((x) >= 0  ? (x) : -(x))
+#endif
+
+/* ****   I'd like to type PI if I want PI !   ***** */
+#ifndef PI
+# define PI         3.141592653589793238462643383279
+#endif
+
+/* *******  General definitions  *********** */
+#define MAXLINE    500 /*  Maximal line length in some routines  */
+#define MAXLENGTH  500 /*  Maximal string length in some routines  */
+
+/*  Some systems define FILENAME_MAX very small (14 for example)  */
+#ifndef JS_FILENAME_MAX
+# if !defined(FILENAME_MAX) || (FILENAME_MAX < 256 && !defined(__MSDOS__))
+#  define JS_FILENAME_MAX  256
+# else
+#  define JS_FILENAME_MAX  FILENAME_MAX
+# endif
+#endif
+
+/* ******  Common environment variable for options and path ***** */
+#define JSENVOPT     "JSOPTIONS"
+#define JSENVPATH    "JSPATH"
+
+/* ***********	 Extracted definitions of library code  ********* */
+/* INSERT-DEFINITIONS */
+
+/* *******   Prototypes of library functions  ***** */
+/*  For C++ compatibility   */
+# ifdef __cplusplus
+#  define Prototype extern "C"
+# else
+#  define Prototype extern
+# endif
+/* INSERT-PROTOTYPES */
+
+# undef Prototype   /* I like to be clean  */
+
+#endif /*  "#ifdef __JSSUBS_H__"  */

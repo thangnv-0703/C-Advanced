@@ -1,0 +1,11 @@
+bFileTruncate: Locked pages beyond file size found
+bFileGet: Cannot map complete region
+bFileGet: End of file
+bFileGet: Page not in memory
+bayTree: Page size too small
+bayTree: Set not found
+bayTree: Field content not unique
+bayTree: Illegal page length
+bayTree: Fields not sorted
+bayTree: Tree's depth changed
+bigSortOpen: BSortMaxMem to small

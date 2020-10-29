@@ -1,0 +1,83 @@
+General remarks on compiling (may not apply to all programs):
+
+ - To configure the program, edit the file "jsconfig.h". Since this is a
+   general configuration file, not all settings may apply to this package.
+   If in doubt, use grep or anything else to find out if a specific
+   configuration symbol is used somewhere.
+
+ - No default optimization option is used in the Makefile since this is
+   compiler dependent. One has to find out what option produces the best
+   result on the platform. Check the manual of your C-compiler for more
+   information. The variable COPTIMIZE is reserved for optimization.
+   For some systems I have experience with optimization options are
+   given at the beginning of the Makefile, uncomment them for your system.
+
+ - The file "ErrCodes.c" contains an array of all error messages that will be
+   produced by the library routines, similar to the ANSI "strerror"-function.
+   The library can be configured to load error messages only on demand from
+   the file "Error.txt" which contains the error messages as ASCII text.
+   This saves space in the executables. For that the file "Error.txt" has to
+   be installed globally accessible in a fixed place and the path name of the
+   file has to be defined like
+        #define CONFIG_ERRMSGFILE      "/this/is/the/path/name"
+   while compiling the package (see "jsconfig.h").
+</P>
+
+ - To compile with additional options, you can use the variable "CCOPTIONS"
+   in the Makefile. You may change the behaviour of make on the fly by
+   entering
+
+       make "CCOPTIONS=-option ..."
+
+   which should work for most "make" commands. Otherwise set it manually
+   in the Makefile or use an environment variable.
+
+ - Similarly, additional link libraries may be set using the variable
+   "LDOPTIONS".
+
+If you encounter problems when compiling this package, some hints:
+
+ - If you don't have an ANSI-C compiler, get one (for example GNU-C)
+   or forget about this program (it uses prototyping with ANSI-C style
+   prototypes, so a K&R compiler won't work). I do *not* support ancient
+   K&R compilers.
+
+ - If your compiler conforms to the POSIX standard but refuses to compile
+   certain routines, try calling make with
+
+       make "CCOPTIONS=-D_POSIX_SOURCE"
+
+   or some option that defines the constant "_POSIX_SOURCE" for the
+   preprocessor. This option should force your compiler to resort to pure
+   POSIX mode and disable any non-POSIX extensions.
+
+ - If you are still not able to compile or if your compiler does not adhere
+   to the POSIX standard, you can prevent the usage of any POSIX functions
+   at all with
+
+       make "CCOPTIONS=-DCONFIG_NO_POSIX"
+
+   Then the code conforms to the ANSI standard. This does not work for some
+   of my programs where POSIX capabilities are required to work at all.
+
+                          Copyright notice:
+                          -----------------
+
+     This package is Copyright (C) 1993-1998 by Joerg Schoen.  Permission to
+   use, copy and distribute this software together with its documentation for
+   any purpose is herby granted provided that this copyright notice appears in
+   all copies.  No fee must be taken for this package.  This software is
+   provided "as is" without expressed or implied warranty.
+
+     For donations, bugs, questions, improvements, my address is
+
+                      Joerg Schoen
+                      Koenigsberger Str. 19
+              D-69124 Heidelberg
+                      GERMANY
+
+              Phone:    0049-6221-780018
+              E-mail:   Joerg.Schoen@tc.pci.uni-heidelberg.de
+              Web-Page: http://www.pci.uni-heidelberg.de/tc/usr/joerg
+
+Enjoy the programs!
