@@ -4,11 +4,12 @@
 
 #include "../Libfdr/jrb.h"
 #include "../Libfdr/jval.h"
+#include "../Libfdr/dllist.h"
 #include "queue.h"
 #include "stack.h"
 
 typedef JRB Graph;
-int visited[26];
+
 
 void addEdge(Graph graph,char *v1,char *v2){
     Graph node,tree;
@@ -60,109 +61,143 @@ void printGraph(Graph g){
 int checkEnd(char *s1,char *s2){
     return (strcmp(s1,s2) == 0);
 }
+void BFT(Graph g,char *startingNode){
+    Dllist queue = new_dllist();
+    JRB visited =  make_jrb();
+    Graph a = jrb_find_str(g,startingNode);
+    
+    if(a == NULL){
+        printf("There is no node like this\n");
+        return;
+    }
+    printf("BF TRAVERSAL\n");
+    printf("%s",startingNode);
+    jrb_insert_str(visited,strdup(startingNode),new_jval_i(1));
+    Graph b,k;
+    k = (JRB) jval_v(a->val);
+    jrb_traverse(b,k){
+        dll_append(queue,new_jval_s(jval_s(b->key)));
+        jrb_insert_str(visited,strdup(jval_s(b->key)),new_jval_i(1));
+    }
+
+    while(!dll_empty(queue)){
+        Dllist node = dll_first(queue);
+        char *f = jval_s(node->val);
+        dll_delete_node(node);
+        a = jrb_find_str(g,f);
+        k = (JRB) jval_v(a->val);
+        printf("->%s",f);
+        jrb_insert_str(visited,strdup(f),new_jval_i(1));
+        jrb_traverse(b,k){
+            if(jrb_find_str(visited,jval_s(b->key)) == NULL){
+                dll_append(queue,new_jval_s(strdup(jval_s(b->key))));
+                jrb_insert_str(visited,strdup(jval_s(b->key)),new_jval_i(1));
+            }
+        }
+    }
+    printf("\n");
+}
 
 void BFS(Graph g,char *startingNode,char* destinationNode){
-    // char *roadMap = (char*) malloc(sizeof(char)*1000);
-    // memset(roadMap,'\0',sizeof(char)*1000);
-    queue node = createQueue();
+    Dllist queue = new_dllist();
+    JRB visited =  make_jrb();
     Graph a = jrb_find_str(g,startingNode);
+    
     if(a == NULL){
         printf("There is no node like this\n");
         return;
     }
     
+    printf("%s",startingNode);
+    jrb_insert_str(visited,strdup(startingNode),new_jval_i(1));
     Graph b,k;
     k = (JRB) jval_v(a->val);
     jrb_traverse(b,k){
-        node = enqueue(node,jval_s(b->key));
-        visited[jval_s(b->key)[indexData] - lower] = 1;
+        if(checkEnd(jval_s(b->key),destinationNode)){
+            printf("->%s\n",destinationNode);
+            return;
+        }
+        dll_append(queue,new_jval_s(jval_s(b->key)));
+        jrb_insert_str(visited,strdup(jval_s(b->key)),new_jval_i(1));
     }
-    //printf("BFS TRAVERSAL\n");
-    printf("%s",startingNode);
 
-    while(!isEmpty(node)){
-        char *f = peek(node)->nodePos;
-        node = dequeue(node);
+    while(!dll_empty(queue)){
+        Dllist node = dll_first(queue);
+        char *f = jval_s(node->val);
+        dll_delete_node(node);
         a = jrb_find_str(g,f);
         k = (JRB) jval_v(a->val);
-        if(a == NULL) continue;
-        visited[(int) f[indexData] - lower] = 1;
-        jrb_traverse(b,k){
-            int index = (int) jval_s(b->key)[indexData] - lower;
-            if(visited[index] == 0){
-                node = enqueue(node,jval_s(b->key));
-                visited[index] = 1;
-            }
-        }
-        printf("->%s",f);
-        if(strcmp(f,destinationNode) == 0){
-            memset(visited,0,sizeof(int)*25);
-            printf("\n");
+        if(checkEnd(f,destinationNode)){
+            printf("->%s\n",destinationNode);
             return;
+        }else printf("->%s",f);
+        
+        jrb_insert_str(visited,strdup(f),new_jval_i(1));
+        jrb_traverse(b,k){
+            if(jrb_find_str(visited,jval_s(b->key)) == NULL){
+                if(checkEnd(jval_s(b->key),destinationNode)){
+                    printf("->%s\n",destinationNode);
+                    return;
+                }
+                dll_append(queue,new_jval_s(strdup(jval_s(b->key))));
+                jrb_insert_str(visited,strdup(jval_s(b->key)),new_jval_i(1));
+            }
         }
     }
     printf("There is no road from %s to %s\n",startingNode,destinationNode);
-    memset(visited,0,sizeof(int)*25);
 }
 
-void DFS(Graph g,char *startingNode,char *destinationNode){
-    int indexData = 1;
-    stack node = create_stack();
-    int lower = 65;
-    visited[(int) startingNode[indexData] - lower] = 1;
+void DFT(Graph g,char *startingNode){
+    Dllist stack = new_dllist();
+    JRB visited =  make_jrb();
     Graph a = jrb_find_str(g,startingNode);
-    if(a==NULL){
-        printf("\nThere is no node like this\n");
+    
+    if(a == NULL){
+        printf("There is no node like this\n");
         return;
     }
-    
+    printf("DF TRAVERSAL\n");
+    printf("%s",startingNode);
+    jrb_insert_str(visited,strdup(startingNode),new_jval_i(1));
     Graph b,k;
     k = (JRB) jval_v(a->val);
     jrb_traverse(b,k){
-        node = push(node,jval_s(b->key));
-        visited[jval_s(b->key)[indexData] - lower] = 1;
+        dll_append(stack,new_jval_s(jval_s(b->key)));
+        jrb_insert_str(visited,strdup(jval_s(b->key)),new_jval_i(1));
     }
-    printf("BFS TRAVERSAL\n");
-    printf("%s",startingNode);
 
-    while(!is_empty(node)){
-        char *f = top(node);
-        node = pop(node);
+    while(!dll_empty(stack)){
+        Dllist node = dll_last(stack);
+        char *f = jval_s(node->val);
+        dll_delete_node(node);
         a = jrb_find_str(g,f);
         k = (JRB) jval_v(a->val);
-        if(a == NULL) continue;
-        visited[(int) f[indexData] - lower] = 1;
+        printf("->%s",f);
+        jrb_insert_str(visited,strdup(f),new_jval_i(1));
         jrb_traverse(b,k){
-            int index = (int) jval_s(b->key)[indexData] - lower;
-            if(visited[index] == 0){
-                node = push(node,jval_s(b->key));
-                visited[index] = 1;
+            if(jrb_find_str(visited,jval_s(b->key)) == NULL){
+                dll_append(stack,new_jval_s(strdup(jval_s(b->key))));
+                jrb_insert_str(visited,strdup(jval_s(b->key)),new_jval_i(1));
             }
         }
-        printf("->%s",f);
-        if(strcmp(f,destinationNode) == 0){
-            memset(visited,0,sizeof(int)*25);
-            printf("\n");
-            return;
-        }
     }
-    printf("\nThere is no road from %s to %s\n",startingNode,destinationNode);
-    memset(visited,0,sizeof(int)*25);
+    printf("\n");
 }
 
 int main(){
     Graph g = make_jrb();
     FILE *fin = fopen("text.txt","r");
     char metro[4];
-    memset(visited,0,sizeof(int)*25);
+    char *startingNode = (char*) malloc(sizeof(char)*4);
+    char *destinationNode = (char*) malloc(sizeof(char)*4);
     while(fscanf(fin,"%s ",metro) == 1){
         metro[4] = '\0';
         char *staPre = (char*) malloc(sizeof(char)*4);
         fscanf(fin,"%s ",staPre);
         staPre[strlen(staPre)] = '\0';
         char *staCur = (char *) malloc(sizeof(char)*4);
-        for(int i = 0 ; i < 9 ; i++){
-            if(i == 9) fscanf(fin,"%s\n",staCur);
+        for(int i = 0 ; i < 4 ; i++){
+            if(i == 3) fscanf(fin,"%s\n",staCur);
             else fscanf(fin,"%s ",staCur);
             staCur[strlen(staCur)]='\0';
             addEdge(g,staPre,staCur);
@@ -172,7 +207,7 @@ int main(){
     }
     int choice;
     do{
-        printf("1.Adjacent List\n2.BFS\n3.DFS\n4.Exit\n");
+        printf("1.Adjacent List\n2.BFT\n3.DFT\n4.Find the shortest route\n5.Exit\n");
         scanf("%d",&choice);
         switch(choice){
             case 1:
@@ -180,25 +215,26 @@ int main(){
                 break;
             case 2:
                 printf("Enter the starting Node\n");
-                char *startingNode = (char*) malloc(sizeof(char));
-                char *destinationNode = (char*) malloc(sizeof(char));
                 fflush(stdin);
                 scanf("%s",startingNode);
-                printf("Enter the destination Node\n");
-                fflush(stdin);
-                scanf("%s",destinationNode);
-                BFS(g,metro,destinationNode);
+                BFT(g,startingNode);
                 break;
             case 3:
+                printf("Enter the starting Node\n");
+                fflush(stdin);
+                scanf("%s",startingNode);
+                DFT(g,startingNode);
+                break;
+            case 4:
                 printf("Enter the starting Node\n");
                 fflush(stdin);
                 scanf("%s",startingNode);
                 printf("Enter the destination Node\n");
                 fflush(stdin);
                 scanf("%s",destinationNode);
-                DFS(g,startingNode,destinationNode);
+                BFS(g,startingNode,destinationNode);
                 break;
         }
-    }while(choice != 4);
+    }while(choice != 5);
     fclose(fin);
 }
