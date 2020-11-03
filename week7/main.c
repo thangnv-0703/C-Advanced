@@ -5,7 +5,7 @@
 #include "../Libfdr/jrb.h"
 #include "../Libfdr/jval.h"
 #include "queue.h"
-
+#include "stack.h"
 
 typedef JRB Graph;
 int visited[26];
@@ -51,6 +51,11 @@ void printGraph(Graph g){
     }
 }
 
+// void printVisited(){
+//     for(int i = 0 ; i <25 ; i++) printf("%d ",visited[i]);
+//     printf("\n");
+// }
+
 void BFS(Graph g,char *startingNode){
     queue node = createQueue();
     int lower = 65;
@@ -65,6 +70,7 @@ void BFS(Graph g,char *startingNode){
     k = (JRB) jval_v(a->val);
     jrb_traverse(b,k){
         node = enqueue(node,jval_s(b->key));
+        visited[jval_s(b->key)[0] - lower] = 1;
     }
     printf("BFS TRAVERSAL\n");
     printf("%s",startingNode);
@@ -89,7 +95,44 @@ void BFS(Graph g,char *startingNode){
     memset(visited,0,sizeof(int)*25);
 }
 
+void DFS(Graph g,char *startingNode){
+    stack node = create_stack();
+    int lower = 65;
+    visited[(int) startingNode[0] - lower] = 1;
+    Graph a = jrb_find_str(g,startingNode);
+    if(a==NULL){
+        printf("There is no node like this\n");
+        return;
+    }
+    
+    Graph b,k;
+    k = (JRB) jval_v(a->val);
+    jrb_traverse(b,k){
+        node = push(node,jval_s(b->key));
+        visited[jval_s(b->key)[0] - lower] = 1;
+    }
+    printf("BFS TRAVERSAL\n");
+    printf("%s",startingNode);
 
+    while(!is_empty(node)){
+        char *f = top(node);
+        node = pop(node);
+        a = jrb_find_str(g,f);
+        k = (JRB) jval_v(a->val);
+        if(a == NULL) continue;
+        visited[(int) f[0] - lower] = 1;
+        jrb_traverse(b,k){
+            int index = (int) jval_s(b->key)[0] - lower;
+            if(visited[index] == 0){
+                node = push(node,jval_s(b->key));
+                visited[index] = 1;
+            }
+        }
+        printf("->%s",f);
+    }
+    printf("\n");
+    memset(visited,0,sizeof(int)*25);
+}
 
 int main(){
     Graph g = make_jrb();
@@ -117,6 +160,12 @@ int main(){
                 fflush(stdin);
                 scanf("%s",start);
                 BFS(g,start);
+                break;
+            case 3:
+                printf("Enter the starting Node\n");
+                fflush(stdin);
+                scanf("%s",start);
+                DFS(g,start);
                 break;
         }
     }while(choice != 4);
