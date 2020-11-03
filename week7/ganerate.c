@@ -28,18 +28,27 @@ char* myitoa(long long i, char b[]){
     }while(i);
     return b;
 }
-char *generateName(){
-    char *rs = (char*) malloc(sizeof(char)*4);
-    memset(rs,'\0',sizeof(char)*4);
-    int num = (rand() % (90 - 65 + 1)) + 65;
-    printf("%d\n",num);
-    rs[0] = (char) num;
-    do{
-        num = (rand() % (90 -65 + 1)) +65;
-    }while((int)rs[0] == (int) num);
-    printf("%d\n",num);
-    rs[1] = ' ';
-    rs[2] = (char) num;
+char *generateName(int k,char first[][10],char middle[][10]){
+    char *rs = (char *)malloc(50*sizeof(char));
+    memset(rs,'\0',sizeof(char)*50);
+    
+    int arr[10];
+    memset(arr,0,sizeof(int)*10);
+    strcpy(rs,first[k]);
+    strcat(rs," ");
+    for(int i = 0 ; i < 10 ; i++){
+        int m;
+        m = rand() % 10;
+        while(arr[m] == 1){
+            m = rand() % 10;
+        }
+        strcat(rs,middle[m]);
+        if (i != 9) strcat(rs," ");
+        arr[m] = 1;
+        for(int i = 0 ; i < 10 ; i++) printf("%d ",arr[i]);
+        printf("\n");
+    }
+    //rs[strlen(rs)] = (char) randomz(65,65+7);
     return rs;
 }
 long long generatePhoneNum(){
@@ -47,17 +56,15 @@ long long generatePhoneNum(){
 }
 
 int main(){
-    //char s[10][10]= {"M1","M2","M3","M4","M5","M6","M7","M8","M9","M10"};
-    //char m[10][10] = {"S1","S2","S3","S4","S5","S6","S7","S8","S9","S10"};
-    FILE *fout = fopen("text.txt","w+");
+    char s[10][10]= {"M1","M2","M3","M4","M5","M6","M7","M8","M9","M10"};
+    char m[10][10] = {"S1","S2","S3","S4","S5","S6","S7","S8","S9","S10"};
+    FILE *fout = fopen("station.txt","w+");
     srand((int)time(0));
 
-    for(int i = 0; i < 50; ++i){
-        fprintf(fout,"%s",generateName());
-        if(i != 49) fputs("\n",fout);
+    for(int i = 0; i < 10; ++i){
+        char *name = generateName(i,s,m);
+        if(i != 9) fprintf(fout,"%s\n",name);
+        else fprintf(fout,"%s",name);
     }
     fclose(fout);
 }
-
-
-

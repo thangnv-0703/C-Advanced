@@ -32,21 +32,19 @@ char *generateName(int k,char first[][10],char middle[][10]){
     char *rs = (char *)malloc(50*sizeof(char));
     memset(rs,'\0',sizeof(char)*50);
     
-    int arr[10];
-    memset(arr,0,sizeof(int)*10);
+    int arr[6];
+    memset(arr,0,sizeof(int)*6);
     strcpy(rs,first[k]);
     strcat(rs," ");
-    for(int i = 0 ; i < 10 ; i++){
+    for(int i = 0 ; i < 6 ; i++){
         int m;
-        m = rand() % 10;
+        m = rand() % 6;
         while(arr[m] == 1){
-            m = rand() % 10;
+            m = rand() % 6;
         }
         strcat(rs,middle[m]);
-        if (i != 9) strcat(rs," ");
+        if (i != 5) strcat(rs," ");
         arr[m] = 1;
-        for(int i = 0 ; i < 10 ; i++) printf("%d ",arr[i]);
-        printf("\n");
     }
     //rs[strlen(rs)] = (char) randomz(65,65+7);
     return rs;
@@ -61,7 +59,7 @@ int main(){
     FILE *fout = fopen("station.txt","w+");
     srand((int)time(0));
 
-    for(int i = 0; i < 10; ++i){
+    for(int i = 0; i < 6; ++i){
         char *name = generateName(i,s,m);
         if(i != 9) fprintf(fout,"%s\n",name);
         else fprintf(fout,"%s",name);
