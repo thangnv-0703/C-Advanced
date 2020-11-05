@@ -31,23 +31,12 @@ char* myitoa(long long i, char b[]){
 char *generateName(int k,char first[][10],char middle[][10]){
     char *rs = (char *)malloc(50*sizeof(char));
     memset(rs,'\0',sizeof(char)*50);
-    
-    int arr[10];
-    memset(arr,0,sizeof(int)*10);
-    strcpy(rs,first[k]);
-    strcat(rs," ");
-    for(int i = 0 ; i < 10 ; i++){
-        int m;
-        m = rand() % 10;
-        while(arr[m] == 1){
-            m = rand() % 10;
-        }
-        strcat(rs,middle[m]);
-        if (i != 9) strcat(rs," ");
-        arr[m] = 1;
-        for(int i = 0 ; i < 10 ; i++) printf("%d ",arr[i]);
-        printf("\n");
-    }
+    int upper = 90;
+    int lower = 65;
+    int num = (rand() % (upper - lower + 1)) + lower; 
+    rs[0] = (char) num;
+    rs[1] = ' ';
+    rs[2] = (char) (rand() % (upper - lower + 1)) + lower; 
     //rs[strlen(rs)] = (char) randomz(65,65+7);
     return rs;
 }
@@ -61,9 +50,9 @@ int main(){
     FILE *fout = fopen("station.txt","w+");
     srand((int)time(0));
 
-    for(int i = 0; i < 10; ++i){
+    for(int i = 0; i < 50; ++i){
         char *name = generateName(i,s,m);
-        if(i != 9) fprintf(fout,"%s\n",name);
+        if(i != 49) fprintf(fout,"%s\n",name);
         else fprintf(fout,"%s",name);
     }
     fclose(fout);

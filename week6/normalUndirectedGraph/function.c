@@ -20,11 +20,9 @@ int adjacent(Graph graph,int v1,int v2){
 }
 int getAdjacentVertices(Graph graph,int vertex,int *output){
     int n = 0;
-    int j = 0;
     for(int i = 0 ; i < graph.sizemax ; i++){
         if(graph.matrix[vertex*graph.sizemax + i]){
-            *(output + j++) = vertex*graph.sizemax + i;
-            n++;
+            *(output + n++) = vertex*graph.sizemax + i;
         }
     }
     return n;

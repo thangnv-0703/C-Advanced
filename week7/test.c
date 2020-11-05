@@ -98,12 +98,6 @@ void BFT(Graph g,char *startingNode){
     printf("\n");
 }
 
-int delimeterCount(char *x,char delimeter){
-    int count = 0;
-    for(int i = 0 ; i < strlen(x) ; i++) if(x[i] == delimeter) count++;
-    return count;
-}
-
 void BFS(Graph g,char *startingNode,char* destinationNode){
     Dllist queue = new_dllist();
     JRB visited =  make_jrb();
@@ -127,7 +121,7 @@ void BFS(Graph g,char *startingNode,char* destinationNode){
 
         jrb_insert_str(routes,strdup(f),new_jval_i(1));
         dll_append(queue,new_jval_s(jval_s(b->key)));
-        /*if(strcmp(destinationNode,jval_s(b->key)) != 0)*/ jrb_insert_str(visited,strdup(jval_s(b->key)),new_jval_i(1));
+        jrb_insert_str(visited,strdup(jval_s(b->key)),new_jval_i(1));
     }
 
     while(!dll_empty(queue)){
@@ -148,53 +142,31 @@ void BFS(Graph g,char *startingNode,char* destinationNode){
             }
         }
 
-        //if(strstr(curRout,destinationNode) != NULL) continue;
-
-        JRB curJRB = jrb_find_str(routes,strdup(curRout));
         jrb_traverse(b,k){
             if(jrb_find_str(visited,jval_s(b->key)) == NULL){
-
                 char *g = (char*) malloc(sizeof(char)*1000);
                 memset(g,'\0',sizeof(char)*1000);
                 strcpy(g,curRout);
                 strcat(g," ");
                 strcat(g,jval_s(b->key));
-                
-                if(strstr(g,destinationNode) != NULL) {
-                    printf("%s\n",g);
-                    return;
-                }
                 jrb_insert_str(routes,strdup(g),new_jval_i(1));
                 dll_append(queue,new_jval_s(strdup(jval_s(b->key))));
-                /*if(strcmp(destinationNode,jval_s(b->key)) != 0)*/ jrb_insert_str(visited,strdup(jval_s(b->key)),new_jval_i(1));
+                jrb_insert_str(visited,strdup(jval_s(b->key)),new_jval_i(1));
             }
         }
-        
-        if (strstr(curRout,destinationNode) == NULL) jrb_delete_node(curJRB);
-        
     }
-
-    // int sizeMin = __INT_MAX__;
-    // char *rs = NULL;
-
-    // jrb_traverse(b,routes){
-    //     if(strstr(jval_s(b->key),destinationNode) != NULL){
-    //         int c = delimeterCount(jval_s(b->key),' ');
-    //         if( c < sizeMin){
-    //             rs = jval_s(b->key);
-    //             sizeMin = c;
-    //         }
-    //     }
-    // }
-    
-    // jrb_traverse(b,routes){
-    //         int c = delimeterCount(jval_s(b->key),' ');
-    //         if( c == sizeMin){
-    //             printf("%s\n",jval_s(b->key));
-    //         }
-    // }
-
-    //if(rs == NULL)
+    int sizeMin = __INT_MAX__;
+    char *rs = NULL;
+    jrb_traverse(b,routes){
+        if(strstr(jval_s(b->key),destinationNode) != NULL){
+            if(strlen(jval_s(b->key)) < sizeMin){
+                rs = jval_s(b->key);
+                sizeMin = strlen(jval_s(b->key));
+            }
+        } 
+    }
+    if(rs != NULL) printf("%s\n",rs);
+    else
         printf("There is no road from %s to %s\n",startingNode,destinationNode);
 }
 
@@ -210,6 +182,7 @@ void DFT(Graph g,char *startingNode){
     printf("DF TRAVERSAL\n");
     printf("%s",startingNode);
     jrb_insert_str(visited,strdup(startingNode),new_jval_i(1));
+    
     Graph b,k;
     k = (JRB) jval_v(a->val);
     jrb_traverse(b,k){
@@ -235,117 +208,15 @@ void DFT(Graph g,char *startingNode){
     printf("\n");
 }
 
-void DFS(Graph g,char *startingNode,char* destinationNode){
-    Dllist stack = new_dllist();
-    JRB visited =  make_jrb();
-    JRB routes = make_jrb();
-    Graph a = jrb_find_str(g,startingNode);
-    
-    if(a == NULL){
-        printf("There is no node like this\n");
-        return;
-    }
-    
-    jrb_insert_str(visited,strdup(startingNode),new_jval_i(1));
-    Graph b,k;
-    k = (JRB) jval_v(a->val);
-    jrb_traverse(b,k){
-        char *f = (char*) malloc(sizeof(char)*1000);
-        memset(f,'\0',sizeof(char)*1000);
-        strcpy(f,startingNode);
-        strcat(f," ");
-        strcat(f,strdup(jval_s(b->key)));
-
-        jrb_insert_str(routes,strdup(f),new_jval_i(1));
-        dll_append(stack,new_jval_s(jval_s(b->key)));
-        if(strcmp(destinationNode,jval_s(b->key)) != 0) jrb_insert_str(visited,strdup(jval_s(b->key)),new_jval_i(1));
-    }
-
-    while(!dll_empty(stack)){
-
-        Dllist node = dll_last(stack);
-        char *f = jval_s(node->val);
-        dll_delete_node(node);
-        a = jrb_find_str(g,f);
-        k = (JRB) jval_v(a->val);
-        jrb_insert_str(visited,strdup(f),new_jval_i(1));
-        JRB n;
-
-        char *curRout;
-        jrb_traverse(n,routes){
-            if(strstr(jval_s(n->key),f) != NULL){
-                curRout = jval_s(n->key);
-                break;
-            }
-        }
-        if(strstr(curRout,destinationNode) != NULL) continue;
-
-        JRB curJRB = jrb_find_str(routes,strdup(curRout));
-        jrb_traverse(b,k){
-            if(jrb_find_str(visited,jval_s(b->key)) == NULL){
-
-                char *g = (char*) malloc(sizeof(char)*1000);
-                memset(g,'\0',sizeof(char)*1000);
-                strcpy(g,curRout);
-                strcat(g," ");
-                strcat(g,jval_s(b->key));
-
-                jrb_insert_str(routes,strdup(g),new_jval_i(1));
-                dll_append(stack,new_jval_s(strdup(jval_s(b->key))));
-                if(strcmp(destinationNode,jval_s(b->key)) != 0) jrb_insert_str(visited,strdup(jval_s(b->key)),new_jval_i(1));
-            }
-        }
-        
-        if (strstr(curRout,destinationNode) == NULL) jrb_delete_node(curJRB);
-        
-    }
-
-    int sizeMin = __INT_MAX__;
-    char *rs = NULL;
-
-    jrb_traverse(b,routes){
-        if(strstr(jval_s(b->key),destinationNode) != NULL){
-            int c = delimeterCount(jval_s(b->key),' ');
-            if( c < sizeMin){
-                rs = jval_s(b->key);
-                sizeMin = c;
-            }
-        }
-    }
-    
-    jrb_traverse(b,routes){
-            int c = delimeterCount(jval_s(b->key),' ');
-            if( c == sizeMin){
-                printf("%s\n",jval_s(b->key));
-            }
-    }
-
-    if(rs == NULL)
-        printf("There is no road from %s to %s\n",startingNode,destinationNode);
-}
-
-
-
 int main(){
     Graph g = make_jrb();
-    FILE *fin = fopen("text.txt","r");
+    FILE *fin = fopen("station.txt","r");
     char metro[4];
     char *startingNode = (char*) malloc(sizeof(char)*4);
     char *destinationNode = (char*) malloc(sizeof(char)*4);
-    while(fscanf(fin,"%s ",metro) == 1){
-        metro[4] = '\0';
-        char *staPre = (char*) malloc(sizeof(char)*4);
-        fscanf(fin,"%s ",staPre);
-        staPre[strlen(staPre)] = '\0';
-        char *staCur = (char *) malloc(sizeof(char)*4);
-        for(int i = 0 ; i < 4 ; i++){
-            if(i == 3) fscanf(fin,"%s\n",staCur);
-            else fscanf(fin,"%s ",staCur);
-            staCur[strlen(staCur)]='\0';
-            addEdge(g,staPre,staCur);
-            addEdge(g,staCur,staPre);
-            strcpy(staPre,staCur);
-        }
+    while(fscanf(fin,"%s %s\n",startingNode,destinationNode) == 2){
+        addEdge(g,startingNode,destinationNode);
+        addEdge(g,destinationNode,startingNode);
     }
     int choice;
     do{
