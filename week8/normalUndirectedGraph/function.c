@@ -10,18 +10,31 @@ Graph createGraph(int sizemax){
     return newGraph;
 }
 
-void addVertices(Graph graph,int v1,int v2){
+void addVertex(Graph graph, int id, char* name){
+    JRB exs = jrb_find_int(graph.vertices,id);
+    if (exs)
+        exs->val.s = name;
+    else
+        jrb_insert_int(graph.vertices,id,new_jval_s(strdup(name)));
     
 }
-int adjacent(Graph graph,int v1,int v2){
-   
+
+char *getVertex(Graph graph, int id){
+    return jval_s(jrb_find_int(graph.vertices,id)->val);
 }
-int getAdjacentVertices(Graph graph,int vertex,int *output){
-  
-}
-void dropGraph(Graph graph){
-    
-}
-void printGraph(Graph graph){
-    
+void addEdge(Graph graph, int v1, int v2){
+    JRB exs = jrb_find_int(graph.edges,v1);
+    if(exs){
+        JRB jrbValueExs = (JRB) jval_v(exs->val);
+        JRB subExs = jrb_find_int(jrbValueExs,v2);
+        if(subExs == NULL)
+            jrb_insert_int(jrbValueExs,v2,new_jval_i(1));
+        else
+            return;
+    }else{
+        JRB tree;
+        tree = make_jrb();
+        jrb_insert_int(graph.edges,v1,new_jval_v(tree));
+        jrb_insert_int(tree,v2,new_jval_i(1));
+    }
 }
