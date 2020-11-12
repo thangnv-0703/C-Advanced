@@ -70,6 +70,7 @@ void BFT(Graph g,char *startingNode){
         printf("There is no node like this\n");
         return;
     }
+    
     printf("BF TRAVERSAL\n");
     printf("%s",startingNode);
     jrb_insert_str(visited,strdup(startingNode),new_jval_i(1));
