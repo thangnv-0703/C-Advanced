@@ -57,8 +57,8 @@ int main(){
                             fscanf(fin,"%s ",staPre);
                             staPre[strlen(staPre)] = '\0';
                             char staCur[4];
-                            for(int i = 0 ; i < 9 ; i++){
-                                if(i == 9) fscanf(fin,"%s\n",staCur);
+                            for(int i = 0 ; i < 5 ; i++){
+                                if(i == 4) fscanf(fin,"%s\n",staCur);
                                 else fscanf(fin,"%s ",staCur);
                                 staCur[strlen(staCur)]='\0';
                                 addEdge(g,staPre,staCur);

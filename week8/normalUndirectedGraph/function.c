@@ -38,3 +38,42 @@ void addEdge(Graph graph, int v1, int v2){
         jrb_insert_int(tree,v2,new_jval_i(1));
     }
 }
+
+int hasEdge(Graph graph, int v1, int v2){
+    JRB node = jrb_find_int(graph.edges,v1);
+    JRB valTree = (JRB) jval_v(node->val);
+    if(valTree){
+        JRB trv;
+        jrb_traverse(trv,valTree){
+            if( trv->key.i == v2){
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+int inDegree(Graph graph, int v, int* output){
+    JRB node,valNode;
+    int n = 0;
+    jrb_traverse(node,graph.edges){
+        JRB tree = (JRB) jval_v(node->val);
+        valNode = jrb_find_int(tree,v);
+        if(valNode){
+            *(output+n++) = jval_i(valNode->key);
+        }
+    }
+    return n;
+}
+
+int outDegree(Graph graph, int v, int* output){
+    JRB node,valNode;
+    int n = 0;
+    node = jrb_find_int(graph.edges,v);
+    if(node){
+        JRB tree = (JRB) jval_s(node->val);
+        jrb_traverse(valNode,tree){
+            *(output + n++) = jval_i(valNode->key);
+        }
+    }
+    return n;
+}
