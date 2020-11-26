@@ -12,4 +12,5 @@ int inDegree(Graph graph, int v, int* output);
 int outDegree(Graph graph, int v, int* output);
 int DAG(Graph graph);
 void dropGraph(Graph graph);
+void printGraph(Graph g);
 #endif
