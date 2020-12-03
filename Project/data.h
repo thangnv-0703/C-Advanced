@@ -1,18 +1,18 @@
 #ifndef __DATA__
 #define __DATA__
 
-struct Flight{
+#include "./Libfdr/jrb.h"
+#include "./Libfdr/jval.h"
+
+typedef struct{
     int id;
     char name[30];
-    int priceNormal;
-    int priceEconomic;
-};
+    int cost;
+}Airport;
 
-struct Airport{
-    int id;
-    char name[30];
-    struct Flight *flights;
-};
-
+typedef struct{
+    JRB vertices;
+    JRB edges;
+} Graph;
 
 #endif
