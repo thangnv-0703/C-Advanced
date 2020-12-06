@@ -21,5 +21,6 @@ int main(){
     addVertex(city,"HaNoi",c1);
     addVertex(city,"HCM",c2);
     addEdge(city,"HaNoi","HCM",2000);
-    
+    addEdge(city,"HCM","HaNoi",200);
+    printf("%d\n",hasEdge(city,"HCM","HaNoi"));
 }
