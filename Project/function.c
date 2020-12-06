@@ -15,30 +15,31 @@ Graph createGraph(){
     return newGraph;
 }
 
-void addEdge(Graph graph,char *start,char *destination,int distance){
+void addEdge(Graph graph,int idStart,int idDestination,float distance){
     JRB node,tree;
-    node = jrb_find_str(graph.edges,start);
-    JRB vertex = jrb_find_str(graph.vertices,start);
+    node = jrb_find_int(graph.edges,idStart);
+    JRB vertex = jrb_find_int(graph.vertices,idStart);
+    if(vertex == NULL) return;
     Airport *startAirport = (Airport*) jval_v(vertex->val);
-    int cost = startAirport->cost;
+    float cost = startAirport->cost;
     if(node){
         tree = (JRB) jval_v(node->val);
-        jrb_insert_str(tree,destination,new_jval_i(distance* cost));
+        jrb_insert_int(tree,idDestination,new_jval_f(distance* cost));
     }else{
         tree = make_jrb();
-        jrb_insert_str(graph.edges,start,new_jval_v(tree));
-        jrb_insert_str(tree,destination,new_jval_i(distance*cost));
+        jrb_insert_int(graph.edges,idStart,new_jval_v(tree));
+        jrb_insert_int(tree,idDestination,new_jval_f(distance*cost));
     }
 }
 
-void addVertex(Graph graph,char *name, Airport *airport){
-    JRB exs = jrb_find_str(graph.vertices,name);
+void addVertex(Graph graph,int id, Airport *airport){
+    JRB exs = jrb_find_int(graph.vertices,id);
     if(exs != NULL){
         exs->val = new_jval_v(airport);
     }else{
-        jrb_insert_str(graph.vertices,strdup(name),new_jval_v(airport));
+        jrb_insert_int(graph.vertices,id,new_jval_v(airport));
     }
-    
+
 }
 
 void printSeparateLine(){
@@ -65,12 +66,12 @@ Airport *getVertex(Graph graph, char *name){
     return (Airport *) jval_v(jrb_find_str(graph.vertices,name)->val);
 }
 
-int hasEdge(Graph graph,char *start,char *destination){
-    JRB node = jrb_find_str(graph.edges,start);
+int hasEdge(Graph graph,int idStart,int idDestination){
+    JRB node = jrb_find_int(graph.edges,idStart);
     JRB tree;
     if(node){
         tree = (JRB) jval_v(node->val);
-        JRB checkNode = jrb_find_str(tree,destination);
+        JRB checkNode = jrb_find_int(tree,idDestination);
         if(checkNode != NULL) return 1;
     }
     return 0;

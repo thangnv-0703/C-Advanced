@@ -6,8 +6,8 @@
 
 typedef struct{
     int id;
-    char name[30];
-    int cost;
+    char name[100];
+    float cost;
 }Airport;
 
 typedef struct{

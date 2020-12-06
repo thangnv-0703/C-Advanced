@@ -7,20 +7,43 @@
 #include "./Libfdr/jrb.h"
 #include "./Libfdr/jval.h"
 
+float float_rand( float min, float max )
+{
+    float scale = rand() / (float) RAND_MAX; /* [0, 1.0] */
+    return min + scale * ( max - min );      /* [min, max] */
+}
+
+Graph input(){
+    Graph graph = createGraph();
+    FILE *ptr = fopen("airports.dat","r+");
+    FILE *ptr2 = fopen("routes.dat","r+");
+    int id;
+    char *name = (char*) malloc(sizeof(char)*100);
+    memset(name,'\0',sizeof(name));
+    while(!feof(ptr)){
+        fscanf(ptr,"%d ",&id);
+        fgets(name,100,ptr);
+        Airport *newAirport = (Airport*) malloc(sizeof(Airport));
+        newAirport->id = id;
+        strcpy(newAirport->name,name);
+        newAirport->cost = 1;
+        addVertex(graph,id,newAirport);
+    }
+    float lat1,lat2,lon1,lon2;
+    int idSource,idDes;
+    char sourceAir[10],DesAir[10];
+    float distance;
+    fclose(ptr);
+    while(!feof(ptr2)){
+        fscanf(ptr2,"%s %d %s %d %f %f %f %f %f\n",sourceAir,&idSource,DesAir,&idDes,&lat1,&lon1,&lat2,&lon2,&distance);
+        addEdge(graph,idSource,idDes,distance);
+    }
+    fclose(ptr2);
+    return graph;
+}
 
 int main(){
-    Graph city = createGraph();
-    Airport *c1 = (Airport*) malloc(sizeof(Airport));
-    Airport *c2 = (Airport*) malloc(sizeof(Airport));
-    c1->cost = 20;
-    strcpy(c1->name,"HaNoi");
-    c1->id = 1;
-    c2->cost = 10;
-    strcpy(c2->name,"HCM");
-    c2->id = 2;
-    addVertex(city,"HaNoi",c1);
-    addVertex(city,"HCM",c2);
-    addEdge(city,"HaNoi","HCM",2000);
-    addEdge(city,"HCM","HaNoi",200);
-    printf("%d\n",hasEdge(city,"HCM","HaNoi"));
+    Graph graph = input();
+    JRB node;
+
 }
