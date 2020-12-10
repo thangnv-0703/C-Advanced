@@ -147,6 +147,7 @@ void printPaths(JRB parents, char *destination, int count)
         printf("%s", destination);
         return;
     }
+    if(count == 20) return;
     printPaths(parents, jval_s(node->val), count + 1);
     printf("->%s", destination);
 }
@@ -232,7 +233,7 @@ Dllist Dijkstra(Graph graph, int idStart, int idDestination)
                 {
                     if (nodeQueue == NULL)
                     {
-                        if(jrb_find_str(parents,airportNode->name) == NULL) jrb_insert_str(parents, strdup(airportNode->name), new_jval_s(strdup(minValue)));
+                        if(strcmp(airportNode->name,minValue) != 0) jrb_insert_str(parents, strdup(airportNode->name), new_jval_s(strdup(minValue)));
                         jrb_insert_str(queue, strdup(airportNode->name), new_jval_v(t));
                     }
                     else
@@ -241,7 +242,7 @@ Dllist Dijkstra(Graph graph, int idStart, int idDestination)
                         if (t->cost < nodeQueueVal->cost)
                         {
                             nodeQueueVal->cost = t->cost;
-                            JRB nodeInParentsTree = jrb_find_str(parents, airportNode->name);
+                            JRB nodeInParentsTree = jrb_find_str(parents, strdup(airportNode->name));
                             char *new_parents = strdup(minValue);
                             char *temp = strdup(airportNode->name);
                             jrb_delete_node(nodeInParentsTree);
@@ -253,8 +254,6 @@ Dllist Dijkstra(Graph graph, int idStart, int idDestination)
             }
             
         }
-        //printf("%s\n",minValue);
-        //printf("%f\n",shortestCost);
     }
     if (emptyQueue(queue))
         printf("No path between two airports\n");
@@ -269,8 +268,8 @@ Dllist Dijkstra(Graph graph, int idStart, int idDestination)
         // jrb_traverse(node,parents){
         //     printf("%s %s\n",jval_s(node->key),jval_s(node->val));
         // }
-        //printPaths(parents, inforDestinationAirport->name, 0);
-        //printf("\nCost: %f\n", shortestCost);
+        printPaths(parents, inforDestinationAirport->name, 0);
+        printf("\nCost: %f\n", shortestCost);
     }
 }
 #endif

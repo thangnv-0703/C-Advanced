@@ -3,6 +3,7 @@
 #include <string.h>
 #include "data.h"
 #include "function.h"
+#include "time.h"
 #include "./Libfdr/dllist.h"
 #include "./Libfdr/jrb.h"
 #include "./Libfdr/jval.h"
@@ -17,7 +18,6 @@ Graph input(){
     Graph graph = createGraph();
     FILE *ptr = fopen("airports.dat","r+");
     FILE *ptr2 = fopen("routes.dat","r+");
-    FILE *ptr3 = fopen("new.dat","w+");
     int id;
     char *name = (char*) malloc(sizeof(char)*100);
     memset(name,'\0',sizeof(name));
@@ -39,11 +39,6 @@ Graph input(){
     while(!feof(ptr2)){
         fscanf(ptr2,"%s %d %s %d %f %f %f %f %f\n",sourceAir,&idSource,DesAir,&idDes,&lat1,&lon1,&lat2,&lon2,&distance);
         JRB findingNode = jrb_find_int(graph.vertices,idSource);
-        if(idSource == 0 || idDes == 0){
-            printf("Opps\n");
-        }else{
-            fprintf(ptr3,"%s %d %s %d %f %f %f %f %f\n",sourceAir,idSource,DesAir,idDes,lat1,lon1,lat2,lon2,distance);
-        }
         if(idSource == idDes) continue;
         Airport *inforNode;
         if(findingNode != NULL) inforNode = (Airport*) jval_v(findingNode->val);
@@ -55,12 +50,24 @@ Graph input(){
         addEdge(graph,idSource,idDes,sourceAir,DesAir,distance);
     }
     fclose(ptr2);
-    fclose(ptr3);
     return graph;
+}
+
+int random(int minN, int maxN){
+    return minN + rand() % (maxN + 1 - minN);
 }
 
 int main(){
     Graph graph = input();
     JRB node;
-    Dijkstra(graph,3199,3830);
+    srand((int)time(0));
+    int r;
+    // for(int i = 0; i < 100; ++i){
+    //     int j = random(1,14000);
+    //     int k = random(1,14000);
+    //     printf("%d %d\n",j,k);
+    //     Dijkstra(graph,j,k);
+    // }    
+    Dijkstra(graph,2603,3744);
+    printf("hiiii\n");
 }
