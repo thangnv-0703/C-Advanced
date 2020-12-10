@@ -269,8 +269,8 @@ Dllist Dijkstra(Graph graph, int idStart, int idDestination)
         // jrb_traverse(node,parents){
         //     printf("%s %s\n",jval_s(node->key),jval_s(node->val));
         // }
-        printPaths(parents, inforDestinationAirport->name, 0);
-        printf("\nCost: %f\n", shortestCost);
+        //printPaths(parents, inforDestinationAirport->name, 0);
+        //printf("\nCost: %f\n", shortestCost);
     }
 }
 #endif

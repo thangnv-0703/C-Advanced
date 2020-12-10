@@ -17,6 +17,7 @@ Graph input(){
     Graph graph = createGraph();
     FILE *ptr = fopen("airports.dat","r+");
     FILE *ptr2 = fopen("routes.dat","r+");
+    FILE *ptr3 = fopen("new.dat","w+");
     int id;
     char *name = (char*) malloc(sizeof(char)*100);
     memset(name,'\0',sizeof(name));
@@ -38,6 +39,11 @@ Graph input(){
     while(!feof(ptr2)){
         fscanf(ptr2,"%s %d %s %d %f %f %f %f %f\n",sourceAir,&idSource,DesAir,&idDes,&lat1,&lon1,&lat2,&lon2,&distance);
         JRB findingNode = jrb_find_int(graph.vertices,idSource);
+        if(idSource == 0 || idDes == 0){
+            printf("Opps\n");
+        }else{
+            fprintf(ptr3,"%s %d %s %d %f %f %f %f %f\n",sourceAir,idSource,DesAir,idDes,lat1,lon1,lat2,lon2,distance);
+        }
         if(idSource == idDes) continue;
         Airport *inforNode;
         if(findingNode != NULL) inforNode = (Airport*) jval_v(findingNode->val);
@@ -49,6 +55,7 @@ Graph input(){
         addEdge(graph,idSource,idDes,sourceAir,DesAir,distance);
     }
     fclose(ptr2);
+    fclose(ptr3);
     return graph;
 }
 
