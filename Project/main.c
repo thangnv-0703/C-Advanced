@@ -23,6 +23,7 @@ Graph input(){
     while(!feof(ptr)){
         fscanf(ptr,"%d ",&id);
         fgets(name,100,ptr);
+        name[strlen(name) - 1] = '\0';
         Airport *newAirport = (Airport*) malloc(sizeof(Airport));
         newAirport->id = id;
         strcpy(newAirport->name,name);
@@ -31,12 +32,19 @@ Graph input(){
     }
     float lat1,lat2,lon1,lon2;
     int idSource,idDes;
-    char sourceAir[10],DesAir[10];
+    char sourceAir[100],DesAir[100];
     float distance;
     fclose(ptr);
     while(!feof(ptr2)){
         fscanf(ptr2,"%s %d %s %d %f %f %f %f %f\n",sourceAir,&idSource,DesAir,&idDes,&lat1,&lon1,&lat2,&lon2,&distance);
-        addEdge(graph,idSource,idDes,distance);
+        JRB findingNode = jrb_find_int(graph.vertices,idSource);
+        Airport *inforNode;
+        if(findingNode != NULL) inforNode = (Airport*) jval_v(findingNode->val);
+        if(inforNode != NULL) strcpy(sourceAir,inforNode->name);
+        findingNode = jrb_find_int(graph.vertices,idDes);
+        if(findingNode != NULL) inforNode = (Airport*) jval_v(findingNode->val);
+        if(inforNode != NULL) strcpy(DesAir,inforNode->name);
+        addEdge(graph,idSource,idDes,sourceAir,DesAir,distance);
     }
     fclose(ptr2);
     return graph;
@@ -45,5 +53,5 @@ Graph input(){
 int main(){
     Graph graph = input();
     JRB node;
-
+    Dijkstra(graph,2966,3386);
 }
