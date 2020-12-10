@@ -113,13 +113,13 @@ Airport *duplicateInforAirport(Airport *a){
     return b;
 }
 
-void printPaths(JRB parents,char *destination){
+void printPaths(JRB parents,char *destination,int count){
     JRB node = jrb_find_str(parents,destination);
     if(node == NULL){
         printf("%s",destination);
         return;
     }
-    printPaths(parents,jval_s(node->val));
+    printPaths(parents,jval_s(node->val),count+1);
     printf("->%s",destination);
 }
 
@@ -199,7 +199,6 @@ Dllist Dijkstra(Graph graph,int idStart,int idDestination){
                 jrb_insert_str(parents,airportNode->name,new_jval_s(strdup(minValue)));
                 jrb_insert_str(queue,airportNode->name,new_jval_v(t));
             }else if(nodeQueue != NULL){
-                if(nodeQueue == NULL) printf("NULLL\n");
                 Airport *nodeQueueVal = (Airport*) jval_v(nodeQueue->val);
                 if(t->cost < nodeQueueVal->cost){
                     nodeQueueVal->cost = t->cost;
@@ -215,8 +214,11 @@ Dllist Dijkstra(Graph graph,int idStart,int idDestination){
     }
     if(emptyQueue(queue)) printf("No path between two airports\n");
     else{
-        
-        printPaths(parents,inforDestinationAirport->name);
+        jrb_traverse(node,parents){
+            printf("%s %s\n",jval_s(node->key),jval_s(node->val));
+        }
+        //printPaths(parents,inforDestinationAirport->name,0);
+        //printf("\nCost: %f\n",shortestCost);
     }
     //printf("%f\n",shortestCost);
 }

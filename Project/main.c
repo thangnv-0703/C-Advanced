@@ -53,5 +53,5 @@ Graph input(){
 int main(){
     Graph graph = input();
     JRB node;
-    Dijkstra(graph,2966,3386);
+    Dijkstra(graph,3199,3830);
 }
