@@ -4,9 +4,9 @@
 #include "data.h"
 #include "function.h"
 #include "time.h"
-#include "./Libfdr/dllist.h"
 #include "./Libfdr/jrb.h"
 #include "./Libfdr/jval.h"
+
 
 float float_rand( float min, float max )
 {
@@ -46,7 +46,6 @@ Graph input(){
         findingNode = jrb_find_int(graph.vertices,idDes);
         if(findingNode != NULL) inforNode = (Airport*) jval_v(findingNode->val);
         if(inforNode != NULL) strcpy(DesAir,inforNode->name);
-        
         addEdge(graph,idSource,idDes,sourceAir,DesAir,distance);
     }
     fclose(ptr2);
@@ -58,16 +57,31 @@ int random(int minN, int maxN){
 }
 
 int main(){
+
     Graph graph = input();
     JRB node;
+    int *arr = (int *) malloc(sizeof(int)*7699);
+    int p = 0;
+    jrb_traverse(node,graph.vertices){
+        *(arr + p) = jval_i(node->key);
+         //printf("%d\n",jval_i(node->key));
+         p +=1;
+    }
     srand((int)time(0));
     int r;
-    // for(int i = 0; i < 100; ++i){
-    //     int j = random(1,14000);
-    //     int k = random(1,14000);
-    //     printf("%d %d\n",j,k);
-    //     Dijkstra(graph,j,k);
-    // }    
-    Dijkstra(graph,2603,3744);
+    clock_t t1,t2;
+    t1 = clock();
+
+    for(int i = 0; i < 100000; i++){
+        int j = random(0,7698);
+        int k = random(0,7698);
+        //printf("%d %d\n",j,k);
+        //Dijkstra(graph,3199,i);
+        Dijkstra(graph,arr[j],arr[k]);
+    }
+    //Dijkstra(graph,2397,5630);
+    //Dijkstra(graph,1,2000);
+    t1 = clock() - t1;
+    printf("%f\n",(double) t1/CLOCKS_PER_SEC);
     printf("hiiii\n");
 }

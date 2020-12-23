@@ -4,6 +4,8 @@
 #include "./Libfdr/jrb.h"
 #include "./Libfdr/jval.h"
 
+#define MAXSIZE 14200
+
 typedef struct{
     int id;
     char name[100];

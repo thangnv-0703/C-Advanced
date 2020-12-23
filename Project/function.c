@@ -2,12 +2,12 @@
 #define __FUNCTION__
 
 #include "data.h"
-#include "./Libfdr/dllist.h"
 #include "./Libfdr/jrb.h"
 #include "./Libfdr/jval.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "dllist.h"
 Graph createGraph()
 {
     Graph newGraph;
@@ -103,173 +103,126 @@ int hasEdge(Graph graph, int idStart, int idDestination)
     return 0;
 }
 
-char *minDistanceKey(JRB tree)
+void printPaths(Graph graph, int *parents, int idDestination, char *s)
 {
-    int cost = __INT_MAX__ * 1.0;
-    char *rs;
-    JRB node;
-    jrb_traverse(node, tree)
+    if (parents[idDestination] == 0)
     {
-        Airport *a = jval_v(node->val);
-        if (a->cost < cost)
-        {
-            rs = jval_s(node->key);
-            cost = a->cost;
-        }
-    }
-    return rs;
-}
-
-int emptyQueue(JRB queue)
-{
-    JRB node;
-    jrb_traverse(node, queue)
-    {
-        return 0;
-    }
-    return 1;
-}
-
-Airport *duplicateInforAirport(Airport *a)
-{
-    Airport *b = (Airport *)malloc(sizeof(Airport));
-    strcpy(b->name, a->name);
-    b->cost = a->cost;
-    b->id = a->id;
-    return b;
-}
-
-void printPaths(JRB parents, char *destination, int count)
-{
-    JRB node = jrb_find_str(parents, destination);
-    if (node == NULL)
-    {
-        printf("%s", destination);
+        
+        strcat(s, ((Airport *)jval_v(jrb_find_int(graph.vertices, idDestination)->val))->name);
+        
         return;
     }
-    if(count == 20) return;
-    printPaths(parents, jval_s(node->val), count + 1);
-    printf("->%s", destination);
+
+    printPaths(graph, parents, parents[idDestination], s);
+    strcat(s, "->");
+    strcat(s, ((Airport *)jval_v(jrb_find_int(graph.vertices, idDestination)->val))->name);
 }
 
-Dllist Dijkstra(Graph graph, int idStart, int idDestination)
-{
-    JRB visited = make_jrb(); // check if vertex is included/ in shortest path.
-    JRB parents = make_jrb(); // store the income edge of node for traceback the shortest path
-    JRB queue = make_jrb();   // store the current nodes
+void pushToHistory(Graph graph,int *parents,int idDestination,float shortestDis){
+        
 
-    // Initally store information of startNode
-    JRB node, tree;
+}
+
+void Dijkstra(Graph graph, int idStart, int idDestination)
+{
+    JRB node;
+    int *parents = (int *)calloc(sizeof(int), MAXSIZE); // store the income edge of node for traceback the shortest path
+
+    pQ queue = create_list();
+
+    int *visited = (int *)malloc(sizeof(int) * MAXSIZE);
+    for (int i = 0; i < MAXSIZE; i++)
+        visited[i] = 0;
+
     JRB startNode = (JRB)jrb_find_int(graph.edges, idStart);
     JRB destinationNode = (JRB)jrb_find_int(graph.vertices, idDestination);
-    if (startNode == NULL || destinationNode == NULL)
-        return NULL;
-    JRB inforStartNode = jrb_find_int(graph.vertices, idStart);
-    Airport *inforStartAirport = (Airport *)jval_v(inforStartNode->val);
-    Airport *inforDestinationAirport = (Airport *)jval_v(destinationNode->val);
 
-    jrb_insert_str(visited, inforStartAirport->name, new_jval_i(0));
-    tree = (JRB)jval_v(startNode->val);
-    // Store the information of outcome edge of startNode
+    if (startNode == NULL || destinationNode == NULL)
+        return;
+
+    visited[idStart] = 1;
+
+    JRB tree = (JRB)jval_v(jrb_find_int(graph.edges, idStart)->val);
+
     jrb_traverse(node, tree)
     {
-        Airport *a = (Airport *)jval_v(node->val);
-        Airport *b = duplicateInforAirport(a);
-        jrb_insert_str(queue, strdup(a->name), new_jval_v(b));
-        jrb_insert_str(parents, strdup(a->name), new_jval_s(strdup(inforStartAirport->name)));
+        queue = pQ_insert(queue,make_node(jval_i(node->key),((Airport*) jval_v(node->val))->cost));
+        parents[jval_i(node->key)] = idStart;
     }
-
-    float shortestCost;
-    while (!emptyQueue(queue))
+    float shortestDis;
+    while (pQ_is_empty(queue) == 0)
     {
-        // if (jrb_first(queue) == NULL)
-        //     printf("NULL\n");
-        // printf("Queue:\n");
-        // jrb_traverse(node,queue){
-        //     Airport *p = jval_v(node->val);
-        //     printf("%d %s %f\n",p->id,p->name,p->cost);
-        // }
+        int minKey = pQ_first(queue)->id;
+        //printf("MinKey: %d\n",minKey);
+        visited[minKey] = 1;
+        shortestDis = pQ_first(queue)->cost;
+       
+        queue = pQ_remove(queue);
 
-        // printf("\n");
-        // printf("Visited:\n");
-        // jrb_traverse(node,visited){
-        //     printf("%s\n",jval_s(node->key));
-        // }
-        // printf("\n");
-        
-        char *minValue = minDistanceKey(queue);
-        //printf("Min value: %s\n",minValue);
-        //printf("%s %s\n",minValue,inforDestinationAirport->name);
-        JRB minNodeQueue = jrb_find_str(queue, minValue);
-        //printf("%s %s\n",inforDestinationAirport->name,minValue);
-        Airport *minAirport = (Airport *)jval_v(minNodeQueue->val);
-        jrb_insert_str(visited, strdup(minValue), new_jval_i(1));
-
-        float minNodeDist = minAirport->cost;
-        shortestCost = minNodeDist;
-        jrb_delete_node(minNodeQueue);
-
-        if (strcmp(inforDestinationAirport->name, minValue) == 0)
+        if (minKey == idDestination)
             break;
-
-        JRB minNodeEdges = jrb_find_int(graph.edges, minAirport->id);
-        JRB outcomesMinNodeEdges;
-
+        JRB minNodeEdges = jrb_find_int(graph.edges, minKey);
         if (minNodeEdges != NULL)
         {
-
-            outcomesMinNodeEdges = (JRB)jval_v(minNodeEdges->val);
-            //printf("OutCome Node:\n");
-            jrb_traverse(node, outcomesMinNodeEdges)
+            JRB outcomeMinNodeEdge = (JRB)jval_v(minNodeEdges->val);
+            jrb_traverse(node, outcomeMinNodeEdge)
             {
-                Airport *airportNode = (Airport *)jval_v(node->val);
-                JRB nodeQueue = jrb_find_str(queue, airportNode->name);
-                //printf("%d %s %f\n",airportNode->id,airportNode->name,airportNode->cost);
-
-                Airport *t = duplicateInforAirport(airportNode);
-
-                t->cost += minNodeDist;
-                if (jrb_find_str(visited, airportNode->name) == NULL)
+                Airport *inforNode = (Airport *)jval_v(node->val);
+                if (visited[inforNode->id] == 0)
                 {
-                    if (nodeQueue == NULL)
+                    pQ nodeInQueue = pQ_hasNode(queue,inforNode->id);
+                    if ( nodeInQueue != NULL)
                     {
-                        if(strcmp(airportNode->name,minValue) != 0) jrb_insert_str(parents, strdup(airportNode->name), new_jval_s(strdup(minValue)));
-                        jrb_insert_str(queue, strdup(airportNode->name), new_jval_v(t));
-                    }
-                    else
-                    {
-                        Airport *nodeQueueVal = (Airport *)jval_v(nodeQueue->val);
-                        if (t->cost < nodeQueueVal->cost)
+
+                        if ( inforNode->cost + shortestDis < nodeInQueue->cost)
                         {
-                            nodeQueueVal->cost = t->cost;
-                            JRB nodeInParentsTree = jrb_find_str(parents, strdup(airportNode->name));
-                            char *new_parents = strdup(minValue);
-                            char *temp = strdup(airportNode->name);
-                            jrb_delete_node(nodeInParentsTree);
-                            jrb_insert_str(parents,temp,new_jval_s(new_parents));
-                            
+                            nodeInQueue->cost = inforNode->cost + shortestDis;
+                            parents[inforNode->id] = minKey;
                         }
+                    }else
+                    {
+                    queue = pQ_insert(queue,make_node(inforNode->id,shortestDis + inforNode->cost));
+                    parents[inforNode->id] = minKey;
                     }
                 }
+                
+
             }
+
             
         }
+        
     }
-    if (emptyQueue(queue))
-        printf("No path between two airports\n");
-    else
-    {
-        // int i = 0;
-        // jrb_traverse(node,visited){
-        //     i++;
-        //     printf("%s %d\n",jval_s(node->key),strlen(jval_s(node->key)));
-        // }
-        // printf("%d\n",i);
-        // jrb_traverse(node,parents){
-        //     printf("%s %s\n",jval_s(node->key),jval_s(node->val));
-        // }
-        printPaths(parents, inforDestinationAirport->name, 0);
-        printf("\nCost: %f\n", shortestCost);
+
+    if(pQ_is_empty(queue)){
+        //printf("No route between two airports\n");
+    }else{
+        //printf("Begin:\n");
+        FILE *out = fopen("history.dat","a+");
+        char *s = (char*) malloc(sizeof(char)*2000);
+        memset(s,'\0',sizeof(char)*2000);
+        printPaths(graph,parents,idDestination,s);
+        for(int i = 0 ; i  < MAXSIZE ; i++){
+            if(parents[i] != 0) printf("%d\n",parents[i]);
+        }
+        printPaths(graph,parents,idDestination,s);
+        exit(1);
+        //printf("\nCost: %f\n",shortestDis);
+        //fprintf(out,"%f ",shortestDis);
+        
+        //fputs(s,out);
+        
+        //fputs("\n",out);
+    
+        //free(s);
+        //printf("End\n");
+        fclose(out);
+        //pushToHistory(graph,parents,idDestination,shortestDis);
     }
+    
+    pQ_free_list(queue);
+    //free(costTable);
+    free(visited);
+    free(parents);
 }
 #endif
